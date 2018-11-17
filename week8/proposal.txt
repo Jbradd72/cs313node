@@ -1,0 +1,4 @@
+For my node project, I want to build a full-stack single page application based around the NFL. 
+It would perform a few different tasks. Firstly, it would display the NFL schedule for each week. Secondly, it would
+allow the user to predict winners for as many games as they would like. Thirdly, and this is probably going to be a
+stretch challenge for me, but it would allow each user to pick winners to challenge the 'CPU'.

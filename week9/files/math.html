@@ -1,0 +1,41 @@
+<html>
+
+<head>
+    <title>Math Fun!</title>
+    <script src="jquery-3.3.1.js"></script>
+    <script>
+        function loadResults(){
+            var op1 = document.getElementById("op1").value;
+            var op2 = document.getElementById("op2").value;
+            var op  = document.getElementById("operators").value;
+            var qString = "http://localhost:8888/math-service?operand1="+op1+"&operand2="+op2+"&operator="+op;
+            $.ajax({
+            url:qString,
+            success:function(result){
+                var obj = $.parseJSON(result);
+                document.getElementById("result").value = obj.result;
+            },
+            error:function(err){alert(err);}
+                
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <form action="../../compute" method="get">
+        Result: <input id="result" type="text">
+        <br>Number 1: <input id="op1" type="number" name="operand1">
+        <br> Number 2: <input id="op2" type="number" name="operand2">
+        <br><select id="operators" name="operator"> 
+        <option value="Add">Add</option>
+    <option value="Subtract">Subtract</option>
+        <option value="Multiply">Multiply</option>
+        <option value="Divide">Divide</option>
+    </select>
+        <input type="button" onclick="loadResults()" value="Ajax Load">
+        <input type="submit">
+    </form>
+</body>
+
+</html>
