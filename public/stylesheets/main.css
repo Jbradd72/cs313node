@@ -24,4 +24,12 @@
     border: 2px solid white; }
     .jumbotron .lang-logo img {
       max-width: 100%; }
+    table{
+      max-width:50%;
+      margin:auto;
+      margin-top:15px;
+    }
 
+ #weekSelectDiv{
+   text-align: center;
+ }
