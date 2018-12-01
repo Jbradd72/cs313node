@@ -12,7 +12,7 @@ express()
   .get('/', (req,res)=>res.render('pages/index'))
   .get('/getSchedule', (req,res)=> {
     var week = req.query.week;
-    if (req.query.week === undefined) week = 16;
+    if (req.query.week === undefined || !(week <= 17 && week >= 1)) week = 17;
     var games = loadWeek(week);
     res.write(JSON.stringify(games)) 
         res.end();

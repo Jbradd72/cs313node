@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <title>Movie Search</title>
+        <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+        <script src="api.js"></script>
+    <script>
+    function search(){
+        var text = document.getElementById("searchText").value;
+        $.ajax({
+            url: `https://www.omdbapi.com/?apikey=${apiKey}&s=${text}`,
+            success: function(data){
+                console.log(data);
+                data.Search.forEach((movie)=>{
+                document.getElementById("results").innerHTML += `<br><button onClick="getMovie('${movie.Title}')"> Get Details</button>` + movie.Title + " " + movie.Year;})
+            }
+        })
+        
+    }
+
+    function getMovie(text){
+        console.log(text);
+    
+        $.ajax({
+            url: `https://www.omdbapi.com/?apikey=${apiKey}&t=${text}`,
+            success: (result) =>{
+                console.log(result);
+                alert(result.Title);
+            }
+        })
+    }
+    </script>
+    </head>
+
+    <body>
+        <input type="text" id="searchText" placeholder="Movie Title">
+        <button onClick="search()">Search</button>
+
+        <h5>Results</h5>
+        <div id="results"></div>
+    </body>
+</html>

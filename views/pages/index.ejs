@@ -15,6 +15,7 @@
       return (name.substr(0,(name.lastIndexOf(" ")))).replace(" ", "-");
   }
   function findWinner(home, away){
+    var button = document.getElementById(home).innerHTML = "Calculating...";
     var id = home;
     var team1 = normalizeName(home);
     var team2 = normalizeName(away);
@@ -22,19 +23,19 @@
     var urlString = `/findWinner?home=${team1}&away=${team2}`;
     $.ajax({url:urlString, success: (res)=>{
       var td = document.getElementById(id).parentElement;
-      td.innerHTML = res;
+      td.innerHTML = "<b>" + res + "</b>";
     }
     });
   }
   function loadWeek(){
     var week = document.getElementById("weekSelect").value;
     var table = document.getElementById("schedule");
-    var schedule = "<thead class='thead-dark'><tr><th>Home</th><th>Away</th><th>Projected Winner</th></tr></thead>";
+    var schedule = "<thead><tr><th>Home</th><th>Away</th><th>Projected Winner</th></tr></thead>";
     $.ajax({url:`/getSchedule?week=${week}`, success: (result)=>{
       var games = JSON.parse(result);
       games.forEach((game)=>{
         schedule += 
-        `<tr><td>${game.Home}</td><td>${game.Away}</td><td><button id="${game.Home}" onclick='findWinner("${game.Home}", "${game.Away}")'>Find Out!</button></td></tr>`;
+        `<tr><td>${game.Home}</td><td>${game.Away}</td><td><button class="btn btn-dark" id="${game.Home}" onclick='findWinner("${game.Home}", "${game.Away}")'>Find Out!</button></td></tr>`;
       })
 
       table.innerHTML = schedule;
@@ -44,9 +45,14 @@
 </script>
 
 <body>
-
   <% include ../partials/nav.ejs %>
-  <div id="weekSelectDiv">
+  <div class="container">
+  <div class="jumbotron">
+  <h4 style="text-align: center;">Predict Winners</h4>
+  <p style="text-align: center;">Pick a week to load and then find out which team will win each game! </p>
+</div>
+</div>
+  <div style="margin-top: 5%" id="weekSelectDiv">
   <select id="weekSelect">
   <option value = "1">Week 1</option>
   <option value = "2">Week 2</option>
@@ -67,8 +73,8 @@
   <option value = "17">Week 17</option>
 </select>
   <button onclick="loadWeek()">Load Week</button></div>
-  <table id="schedule" class="table">
-    <thead class="thead-dark"><tr><th>Home</th><th>Away</th><th>Projected Winner</th></tr>
+  <table id="schedule" class="table table-bordered">
+    <thead ><tr><th>Home</th><th>Away</th><th>Projected Winner</th></tr>
   
     </thead>
   </table>
