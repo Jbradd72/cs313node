@@ -19,10 +19,12 @@
       for (var i = 0; i < rows - 1; i++) {
         obj[i] = document.getElementById(i).value;
       }
-      alert (obj); alert(uname); alert(week2save);
       $.post('/savePicks', { games: obj, username: uname, week:week2save }, (data) => {
         var response = JSON.parse(data);
-        alert(response)
+        if (response.success)
+        alert("Successfully saved your picks!");
+        else
+        alert("There was an error saving your picks. Try again later.")
       }
 
       )
@@ -59,7 +61,7 @@
       $.post('/addUser', { name: nameInput.value, username: uname.value, password: pass.value, email: emailInput.value })
         .done((data) => {
           var resObj = JSON.parse(data);
-          alert(data);
+          
           if (resObj.success) {
             uname.value = '';
             pass.value = '';
