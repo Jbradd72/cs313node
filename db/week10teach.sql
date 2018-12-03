@@ -1,14 +1,18 @@
-CREATE TABLE person (
+CREATE TABLE users(
     id SERIAL PRIMARY KEY NOT NULL,
-    fName varchar(100) NOT NULL,
-    lName varchar(100),
-    birthdate date
+    name varchar(100) NOT NULL,
+    email varchar(100) NOT NULL,
+    username varchar(100) NOT NULL,
+    password varchar(50) NOT NULL
 
 );
 
-CREATE TABLE offspring(
-    parentId INTEGER REFERENCES person(id),
-    childId INTEGER REFERENCES person(id)
+CREATE TABLE picks(
+    id SERIAL PRIMARY KEY NOT NULL,
+    userid int NOT NULL,
+    week int NOT NULL,
+    picks varchar(464)
+
 );
 
 INSERT INTO person( id, fname, lname) VALUES (1, 'Mom', '1');

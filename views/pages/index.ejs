@@ -1,84 +1,172 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <% include ../partials/header.ejs %>
- 
-<script>
-  function normalizeName(name){
-    if(name.includes("New York")){
-      return (name.replace("New York ", "NY-"));
-    }
-    else if (name.includes("Los Angeles")){
-      return (name.replace("Los Angeles ", "LA-"));
-    }
-    else
-      return (name.substr(0,(name.lastIndexOf(" ")))).replace(" ", "-");
-  }
-  function findWinner(home, away){
-    var button = document.getElementById(home).innerHTML = "Calculating...";
-    var id = home;
-    var team1 = normalizeName(home);
-    var team2 = normalizeName(away);
 
-    var urlString = `/findWinner?home=${team1}&away=${team2}`;
-    $.ajax({url:urlString, success: (res)=>{
-      var td = document.getElementById(id).parentElement;
-      td.innerHTML = "<b>" + res + "</b>";
+  <script>
+
+    function submit() {
+      try{
+      var uname = document.getElementById("username").innerHTML;
+      }
+      catch(err){
+        alert("You must be logged in to submit picks.")
+      }
+      var rows = document.getElementById("schedule").rows.length;
+      var obj = {};
+      var week2save = document.getElementById("weekSelect").value;
+      for (var i = 0; i < rows - 1; i++) {
+        obj[i] = document.getElementById(i).value;
+      }
+      alert (obj); alert(uname); alert(week2save);
+      $.post('/savePicks', { games: obj, username: uname, week:week2save }, (data) => {
+        var response = JSON.parse(data);
+        alert(response)
+      }
+
+      )
     }
-    });
-  }
-  function loadWeek(){
-    var week = document.getElementById("weekSelect").value;
-    var table = document.getElementById("schedule");
-    var schedule = "<thead><tr><th>Home</th><th>Away</th><th>Projected Winner</th></tr></thead>";
-    $.ajax({url:`/getSchedule?week=${week}`, success: (result)=>{
-      var games = JSON.parse(result);
-      games.forEach((game)=>{
-        schedule += 
-        `<tr><td>${game.Home}</td><td>${game.Away}</td><td><button class="btn btn-dark" id="${game.Home}" onclick='findWinner("${game.Home}", "${game.Away}")'>Find Out!</button></td></tr>`;
+
+    function logout() {
+      location.reload();
+    }
+
+    function login() {
+      var uname = document.getElementById("usernameInput").value;
+      var pass = document.getElementById("passwordInput").value;
+
+      $.post('/getUser', { username: uname, password: pass }, (data) => {
+        var response = JSON.parse(data);
+        if (response.success) {
+          document.getElementById("userWelcome").innerHTML = "Welcome, <a id='username'>" + response.username + "</a>";
+          document.getElementById("signin").style.display = "none";
+          document.getElementById("signup").style.display = "none"; 
+          document.getElementById("welcome").style.display = "inline";
+        }
+      }
+
+      )
+    }
+
+    function signup() {
+      document.getElementById("errorDiv").style.display = "none";
+      var uname = document.getElementById("signupUsername");
+      var pass = document.getElementById("signupPassword");
+      var nameInput = document.getElementById("nameInput");
+      var emailInput = document.getElementById("emailInput");
+
+      $.post('/addUser', { name: nameInput.value, username: uname.value, password: pass.value, email: emailInput.value })
+        .done((data) => {
+          var resObj = JSON.parse(data);
+          alert(data);
+          if (resObj.success) {
+            uname.value = '';
+            pass.value = '';
+            nameInput.value = '';
+            emailInput.value = '';
+          }
+          else {
+            document.getElementById("signupError").innerHTML = `<p> ${resObj.error}</p>`;
+            document.getElementById("errorDiv").style.display = "block";
+          }
+        })
+    }
+
+    function normalizeName(name) {
+      if (name.includes("New York")) {
+        return (name.replace("New York ", "NY-"));
+      }
+      else if (name.includes("Los Angeles")) {
+        return (name.replace("Los Angeles ", "LA-"));
+      }
+      else
+        return (name.substr(0, (name.lastIndexOf(" ")))).replace(" ", "-");
+    }
+    function findWinner(home, away) {
+      var button = document.getElementById(home).innerHTML = "Calculating...";
+      var id = home;
+      var team1 = normalizeName(home);
+      var team2 = normalizeName(away);
+
+      var urlString = `/findWinner?home=${team1}&away=${team2}`;
+      $.ajax({
+        url: urlString, success: (res) => {
+          var td = document.getElementById(id).parentElement;
+          td.innerHTML = "<b>" + res + "</b>";
+        }
+      });
+    }
+    function loadWeek() {
+      var week = document.getElementById("weekSelect").value;
+      var table = document.getElementById("schedule");
+      var schedule = "<thead><tr><th>Your Pick</th><th>Home</th><th>Away</th><th>Projected Winner</th></tr></thead>";
+      $.ajax({
+        url: `/getSchedule?week=${week}`, success: (result) => {
+          var games = JSON.parse(result);
+          var i = 0;
+          games.forEach((game) => {
+            var home = game.Home;
+            var away = game.Away;
+            schedule +=
+              `<tr><td><select id="${i}"><option>${home}</option><option>${away}</option></select></td><td onClick="select(${home})">${home}</td><td onClick="select(${home})"
+          >${away}</td><td><button class="btn btn-dark" id="${home}" onclick='findWinner("${home}", 
+            "${away}")'>Find Out!</button></td></tr>`;
+            i++;
+          })
+
+          table.innerHTML = schedule;
+
+        }
       })
-
-      table.innerHTML = schedule;
-
-  }})
-  }
-</script>
+    }
+  </script>
 
 <body>
   <% include ../partials/nav.ejs %>
+  <div id="errorDiv" style="color:red; display:none;">Error signing up: Username already taken</div>
   <div class="container">
-  <div class="jumbotron">
-  <h4 style="text-align: center;">Predict Winners</h4>
-  <p style="text-align: center;">Pick a week to load and then find out which team will win each game! </p>
-</div>
-</div>
+    <div class="jumbotron">
+      <h4 style="text-align: center;">Predict Winners</h4>
+      <p style="text-align: center;">Pick a week to load and then find out which team will win each game! </p>
+    </div>
+  </div>
   <div style="margin-top: 5%" id="weekSelectDiv">
-  <select id="weekSelect">
-  <option value = "1">Week 1</option>
-  <option value = "2">Week 2</option>
-  <option value = "3">Week 3</option>
-  <option value = "4">Week 4</option>
-  <option value = "5">Week 5</option>
-  <option value = "6">Week 6</option>
-  <option value = "7">Week 7</option>
-  <option value = "8">Week 8</option>
-  <option value = "9">Week 9</option>
-  <option value = "10">Week 10</option>
-  <option value = "11">Week 11</option>
-  <option value = "12">Week 12</option>
-  <option value = "13">Week 13</option>
-  <option value = "14">Week 14</option>
-  <option value = "15">Week 15</option>
-  <option value = "16">Week 16</option>
-  <option value = "17">Week 17</option>
-</select>
-  <button onclick="loadWeek()">Load Week</button></div>
-  <table id="schedule" class="table table-bordered">
-    <thead ><tr><th>Home</th><th>Away</th><th>Projected Winner</th></tr>
-  
+    <select id="weekSelect">
+      <option value="1">Week 1</option>
+      <option value="2">Week 2</option>
+      <option value="3">Week 3</option>
+      <option value="4">Week 4</option>
+      <option value="5">Week 5</option>
+      <option value="6">Week 6</option>
+      <option value="7">Week 7</option>
+      <option value="8">Week 8</option>
+      <option value="9">Week 9</option>
+      <option value="10">Week 10</option>
+      <option value="11">Week 11</option>
+      <option value="12">Week 12</option>
+      <option value="13">Week 13</option>
+      <option value="14">Week 14</option>
+      <option value="15">Week 15</option>
+      <option value="16">Week 16</option>
+      <option value="17">Week 17</option>
+    </select>
+    <button onclick="loadWeek()">Load Week</button></div>
+  <table id="schedule" class="table table-bordered" style="max-width:66%;">
+    <thead>
+      <tr>
+        <th>Your Pick</th>
+        <th>Home</th>
+        <th>Away</th>
+        <th>Projected Winner</th>
+      </tr>
+
     </thead>
   </table>
 
-
+  <div style="text-align: center;" >
+  <button onClick="submit()" class="btn btn-success">Submit Your Picks</button>
+</div>
 </body>
+
 </html>
