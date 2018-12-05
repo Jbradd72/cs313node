@@ -5,7 +5,13 @@
   <% include ../partials/header.ejs %>
 
   <script>
-
+    function loadPicks(){
+      var week2load = document.getElementById("weekSelect").value;
+      var username = document.getElementById("username").innerHTML;
+      $.ajax({url: `/getPicks?week=${week2load}&username=${username}`, success: (res)=>{
+        alert(res);
+      }})
+    }
     function submit() {
       try{
       var uname = document.getElementById("username").innerHTML;
@@ -153,7 +159,9 @@
       <option value="16">Week 16</option>
       <option value="17">Week 17</option>
     </select>
-    <button onclick="loadWeek()">Load Week</button></div>
+    
+    <button class="btn btn-dark" onclick="loadWeek()">Load Week</button>
+    <button class="btn btn-dark"  onClick="loadPicks()">Load Your Picks For This Week</button></div>
   <table id="schedule" class="table table-bordered" style="max-width:66%;">
     <thead>
       <tr>

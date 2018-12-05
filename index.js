@@ -14,13 +14,13 @@ const pool = new Pool({
     password: '6b6ee4e947aa25b4f4e2adec304c9f81fc26b4836f23d4455795f8801c97eef3',
     port: 5432,
   }) 
-/*const pool = new Pool({
+/* const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
   database: 'nflproject',
   password: 'admin',
   port: 5432,
-})*/
+}) */
 
 express()
   .use(express.static(path.join(__dirname, 'public')))
@@ -35,6 +35,17 @@ express()
     var games = loadWeek(week);
     res.write(JSON.stringify(games))
     res.end();
+  })
+  .get('/getPicks', (req,response)=>{
+    var week = req.query.week;
+    var username = req.query.username;
+    pool.query("select * from users join picks on users.id = picks.userid and week = $1 where username = $2;", 
+      [week, username], (err,data)=>{
+        
+      if (err) throw err;
+      response.write(data.rows[0].picks);
+      response.end();
+    })
   })
   .post('/savePicks', (req,response)=>{
     var games = req.body.games;
