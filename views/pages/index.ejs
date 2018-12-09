@@ -17,7 +17,7 @@
       $.ajax({url: `/getPicks?week=${week2load}&username=${username}`, success: (res)=>{
         var result = JSON.parse(res);
         if (result.success){
-          alert(result.message);//result.message.forEach((pick)=>picks += pick + "\n");
+          alert(result.message[0]);//result.message.forEach((pick)=>picks += pick + "\n");
         }
         else{
           alert(result.message);
