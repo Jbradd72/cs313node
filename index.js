@@ -44,7 +44,7 @@ express()
         
       if (err) throw err;
       if(data.rowCount == 0){
-        response.write(JSON.stringify({success:false, message: "You haven't made any picks yet"}));
+        response.write(JSON.stringify({success:false, message: "You haven't made any picks yet for that week."}));
         response.end();
       }
       else{

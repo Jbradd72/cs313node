@@ -7,7 +7,12 @@
   <script>
     function loadPicks(){
       var week2load = document.getElementById("weekSelect").value;
-      var username = document.getElementById("username").innerHTML;
+      var ulink = document.getElementById("username");
+      if (!ulink){
+        alert ("You must sign in before loading your picks!");
+        return;
+      }
+      var username = ulink.innerHTML;
       $.ajax({url: `/getPicks?week=${week2load}&username=${username}`, success: (res)=>{
         var result = JSON.parse(res);
         if (result.success){
