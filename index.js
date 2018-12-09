@@ -7,20 +7,20 @@ const execSync = require('child_process').execSync;
 const PORT = process.env.PORT || 5000;
 const { Pool } = require('pg')
 
-const pool = new Pool({
+/* const pool = new Pool({
     user: 'oauioygfesuijs',
     host: 'ec2-54-235-193-0.compute-1.amazonaws.com',
     database: 'd325338gdhf4to',
     password: '6b6ee4e947aa25b4f4e2adec304c9f81fc26b4836f23d4455795f8801c97eef3',
     port: 5432,
-  }) 
-/* const pool = new Pool({
+  })  */
+const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
   database: 'nflproject',
   password: 'admin',
   port: 5432,
-}) */
+})
 
 express()
   .use(express.static(path.join(__dirname, 'public')))
