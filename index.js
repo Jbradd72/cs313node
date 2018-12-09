@@ -43,7 +43,7 @@ express()
       [week, username], (err,data)=>{
         
       if (err) throw err;
-      if(res.rowCount == 0){
+      if(data.rowCount == 0){
         response.write(JSON.stringify({success:false, message: "You haven't made any picks yet"}));
         response.end();
       }
