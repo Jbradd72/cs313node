@@ -43,8 +43,14 @@ express()
       [week, username], (err,data)=>{
         
       if (err) throw err;
-      response.write(data.rows[0].picks);
-      response.end();
+      if(res.rowCount == 0){
+        response.write(JSON.stringify({success:false, message: "You haven't made any picks yet"}));
+        response.end();
+      }
+      else{
+        response.write(JSON.stringify({success:true, message:data.rows[0].picks}));
+        response.end();
+      }
     })
   })
   .post('/savePicks', (req,response)=>{

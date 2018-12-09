@@ -22,9 +22,15 @@ express()
             if (err) {
                 throw err
             }
-            response.write(JSON.stringify(res.rows[0]))
-            response.end()
-            console.log('person:', res.rows[0])
+            if(res.rowCount == 0){
+                response.write(JSON.stringify({}));
+                response.end();
+            }
+            else{
+                response.write(JSON.stringify(res.rows[0]))
+                response.end()
+                console.log('person:', res.rows[0])
+            }
         })
         
     })
