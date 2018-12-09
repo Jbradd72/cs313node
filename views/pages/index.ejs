@@ -9,6 +9,7 @@
       var week2load = document.getElementById("weekSelect").value;
       var username = document.getElementById("username").innerHTML;
       $.ajax({url: `/getPicks?week=${week2load}&username=${username}`, success: (res)=>{
+        
         alert(res);
       }})
     }
