@@ -8,6 +8,7 @@
     function loadPicks(){
       var week2load = document.getElementById("weekSelect").value;
       var ulink = document.getElementById("username");
+      var picks;;
       if (!ulink){
         alert ("You must sign in before loading your picks!");
         return;
@@ -16,7 +17,7 @@
       $.ajax({url: `/getPicks?week=${week2load}&username=${username}`, success: (res)=>{
         var result = JSON.parse(res);
         if (result.success){
-          result.message.forEach((pick)=>alert(pick));
+          result.message.forEach((pick)=>picks += pick + "\n");
         }
         else{
           alert(result.message);
